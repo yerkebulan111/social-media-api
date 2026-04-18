@@ -9,6 +9,15 @@ from app.services.user import UserService
 router = APIRouter()
 
 
+@router.post("/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
+def register(user: UserCreate, session: SessionDep):
+    return UserService.register(user, session)
+
+
+@router.post("/login")
+def login(email: str, password: str, session: SessionDep):
+    return UserService.login(email, password, session)
+
 @router.get("/me", response_model=UserPublic)
 def get_me(session: SessionDep):
     return UserService.get_me(session)
