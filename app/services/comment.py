@@ -30,6 +30,8 @@ class CommentService:
         comment = CommentRepository.get_by_id(comment_id, session)
         if not comment:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+        if comment.author_id != current_user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not your comment")
         return CommentRepository.update(comment, data, session)
 
     @staticmethod
@@ -37,4 +39,6 @@ class CommentService:
         comment = CommentRepository.get_by_id(comment_id, session)
         if not comment:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+        if comment.author_id != current_user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not your comment")
         CommentRepository.delete(comment, session)
