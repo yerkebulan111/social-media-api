@@ -1,10 +1,13 @@
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
 
 if TYPE_CHECKING:
     from app.models.post import Post
+    from app.models.comment import Comment
+    from app.models.like import Like
+    from app.models.follow import Follow
 
 
 
@@ -23,6 +26,18 @@ class User(UserBase, table=True):
     password_hashed: str
     is_active: bool = Field(default=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    posts: list["Post"] = Relationship(back_populates="author")
+    comments: list["Comment"] = Relationship(back_populates="author")
+    likes: list["Like"] = Relationship(back_populates="user")
+    following: list["Follow"] = Relationship(
+        back_populates="follower",
+        sa_relationship_kwargs={"foreign_keys": "[Follow.follower_id]"},
+    )
+    followers: list["Follow"] = Relationship(
+        back_populates="followed",
+        sa_relationship_kwargs={"foreign_keys": "[Follow.followed_id]"},
+    )
 
 
 # Public response models

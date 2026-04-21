@@ -5,6 +5,8 @@ from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from app.models.user import User, UserPublicBrief
+    from app.models.comment import Comment
+    from app.models.like import Like
 
 
 class PostBase(SQLModel):

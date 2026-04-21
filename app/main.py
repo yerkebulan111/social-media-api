@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.database import create_db_and_tables
-from app.routers import post, user, comment, like
+from app.routers import post, user, comment, like, follow
 
 
 @asynccontextmanager
@@ -21,6 +21,7 @@ app.include_router(post.router, prefix="/posts", tags=["posts"])
 app.include_router(user.router, prefix="/users", tags=["users"])
 app.include_router(comment.router, prefix="/comments", tags=["comments"])
 app.include_router(like.router, prefix="/likes", tags=["likes"])
+app.include_router(follow.router, prefix="/follows", tags=["follows"])
 
 
 @app.get("/", tags=["root"])

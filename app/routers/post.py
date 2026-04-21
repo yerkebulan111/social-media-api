@@ -1,13 +1,16 @@
+from typing import Annotated
 
-from fastapi import APIRouter, Query, status
+from fastapi import APIRouter, Query, status, Depends
 
-
+from app.core.security import get_current_user_id
 from app.database import SessionDep
 from app.models.post import PostCreate, PostPublic, PostUpdate
 from app.services.post import PostService
 
 router = APIRouter()
 
+
+CurrentUser = Annotated[int, Depends(get_current_user_id)]
 
 @router.get("/", response_model=list[PostPublic])
 def get_posts(
@@ -24,15 +27,15 @@ def get_post(post_id: int, session: SessionDep):
 
 
 @router.post("/", response_model=PostPublic, status_code=status.HTTP_201_CREATED)
-def create_post(post: PostCreate, session: SessionDep):
-    return PostService.create_post(post, session)
+def create_post(post: PostCreate, session: SessionDep, current_user_id: CurrentUser):
+    return PostService.create_post(post, current_user_id, session)
 
 
 @router.patch("/{post_id}", response_model=PostPublic)
-def update_post(post_id: int, post: PostUpdate, session: SessionDep):
-    return PostService.update_post(post_id, post, session)
+def update_post(post_id: int, post: PostUpdate, session: SessionDep, current_user_id: CurrentUser):
+    return PostService.update_post(post_id, post, current_user_id, session)
 
 
 @router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(post_id: int, session: SessionDep):
-    PostService.delete_post(post_id, session)
+def delete_post(post_id: int, session: SessionDep, current_user_id: CurrentUser):
+    PostService.delete_post(post_id, current_user_id, session)
